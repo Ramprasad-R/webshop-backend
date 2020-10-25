@@ -15,8 +15,6 @@ const addOrderItems = asyncHandler(async (req, res, next) => {
     totalPrice,
   } = req.body
 
-  console.log(orderItems)
-
   if (typeof orderItems === 'undefined' || orderItems.length === 0) {
     res.status(400)
     throw new Error('No order items')

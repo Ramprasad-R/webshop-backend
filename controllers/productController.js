@@ -162,17 +162,11 @@ const reduceCountInStock = asyncHandler(async (req, res) => {
   const { orderItems } = req.body
   if (orderItems) {
     orderItems.map(async (item) => {
-      try {
-        await Product.findByIdAndUpdate(item.product, {
-          countInStock: Number(item.countInStock) - Number(item.qty),
-        })
-        res.status(201).json(req.createdOrder)
-      } catch (error) {
-        console.log('error', error)
-        res.status(400)
-        throw new Error('No order items')
-      }
+      await Product.findByIdAndUpdate(item.product, {
+        countInStock: Number(item.countInStock) - Number(item.qty),
+      })
     })
+    res.status(201).json(req.createdOrder)
   } else {
     res.status(404)
     throw new Error('No order items')
