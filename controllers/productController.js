@@ -156,6 +156,29 @@ const getTopProducts = asyncHandler(async (req, res) => {
   res.json(products)
 })
 
+// @desc    Reduce Count In Stock once the order is placed
+// @access  Private
+const reduceCountInStock = asyncHandler(async (req, res) => {
+  const { orderItems } = req.body
+  if (orderItems) {
+    orderItems.map(async (item) => {
+      try {
+        await Product.findByIdAndUpdate(item.product, {
+          countInStock: Number(item.countInStock) - Number(item.qty),
+        })
+        res.status(201).json(req.createdOrder)
+      } catch (error) {
+        console.log('error', error)
+        res.status(400)
+        throw new Error('No order items')
+      }
+    })
+  } else {
+    res.status(404)
+    throw new Error('No order items')
+  }
+})
+
 export {
   getProducts,
   getProductById,
@@ -164,4 +187,5 @@ export {
   updateProduct,
   createProductReview,
   getTopProducts,
+  reduceCountInStock,
 }

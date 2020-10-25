@@ -4,7 +4,7 @@ import Order from '../models/orderModel.js'
 // @desc    Create new order
 // @route   POST /api/orders
 // @access  Private
-const addOrderItems = asyncHandler(async (req, res) => {
+const addOrderItems = asyncHandler(async (req, res, next) => {
   const {
     orderItems,
     shippingAddress,
@@ -14,6 +14,8 @@ const addOrderItems = asyncHandler(async (req, res) => {
     shippingPrice,
     totalPrice,
   } = req.body
+
+  console.log(orderItems)
 
   if (typeof orderItems === 'undefined' || orderItems.length === 0) {
     res.status(400)
@@ -31,9 +33,10 @@ const addOrderItems = asyncHandler(async (req, res) => {
       totalPrice,
     })
 
-    const createdOrder = await order.save()
+    req.createdOrder = await order.save()
 
-    res.status(201).json(createdOrder)
+    // res.status(201).json(createdOrder)
+    next()
   }
 })
 
