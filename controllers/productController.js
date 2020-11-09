@@ -63,6 +63,7 @@ const createProduct = asyncHandler(async (req, res) => {
     user: req.user._id,
     image: '/images/sample.jpg',
     brand: 'Sample brand',
+    department: 'Sample department',
     category: 'Sample category',
     countInStock: 0,
     numReviews: 0,
@@ -163,7 +164,7 @@ const reduceCountInStock = asyncHandler(async (req, res) => {
   if (orderItems) {
     orderItems.map(async (item) => {
       await Product.findByIdAndUpdate(item.product, {
-        countInStock: Number(item.countInStock) - Number(item.qty),
+        countInStock: item.countInStock - item.qty,
       })
     })
     res.status(201).json(req.createdOrder)
