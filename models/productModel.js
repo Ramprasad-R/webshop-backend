@@ -72,10 +72,20 @@ const productSchema = mongoose.Schema(
       required: true,
       default: 0,
     },
+    promotionalPrice: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
     countInStock: {
       type: Number,
       required: true,
       default: 0,
+    },
+    dateOfExpiry: {
+      type: Date,
+      required: false,
+      min: Date.now,
     },
   },
   {

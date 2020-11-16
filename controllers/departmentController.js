@@ -40,6 +40,18 @@ const createCategories = asyncHandler(async (req, res) => {
   const department = await Department.findById(req.params.id)
 
   if (department) {
+    const categoryExist =
+      department.categories.length > 0
+        ? department.categories.filter(
+            (category) => category.category === category
+          )
+        : null
+    console.log(categoryExist)
+    if (categoryExist.length > 0) {
+      res.status(403)
+      throw new Error('Category already exist')
+    }
+
     const newCategory = {
       category,
       user: req.user._id,

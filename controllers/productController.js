@@ -8,18 +8,36 @@ const getProducts = asyncHandler(async (req, res) => {
   const pageSize = 10
   const page = Number(req.query.pageNumber) || 1
 
-  const keyword = req.query.keyword
-    ? {
-        name: {
-          $regex: req.query.keyword,
-          $options: 'i',
-        },
-      }
-    : {}
+  const { department, brand, keyword } = req.query
+  let getProductBy
+  if (department) {
+    getProductBy = {
+      department: {
+        $regex: department,
+        $options: 'i',
+      },
+    }
+  } else if (brand) {
+    getProductBy = {
+      brand: {
+        $regex: brand,
+        $options: 'i',
+      },
+    }
+  } else {
+    getProductBy = keyword
+      ? {
+          name: {
+            $regex: keyword,
+            $options: 'i',
+          },
+        }
+      : {}
+  }
 
-  const count = await Product.countDocuments({ ...keyword })
+  const count = await Product.countDocuments({ ...getProductBy })
 
-  const products = await Product.find({ ...keyword })
+  const products = await Product.find({ ...getProductBy })
     .limit(pageSize)
     .skip(pageSize * (page - 1))
   res.json({ products, page, pages: Math.ceil(count / pageSize) })
@@ -84,8 +102,11 @@ const updateProduct = asyncHandler(async (req, res) => {
     description,
     image,
     brand,
+    department,
     category,
     countInStock,
+    promotionalPrice,
+    dateOfExpiry,
   } = req.body
 
   const product = await Product.findById(req.params.id)
@@ -96,8 +117,11 @@ const updateProduct = asyncHandler(async (req, res) => {
     product.description = description
     product.image = image
     product.brand = brand
+    product.department = department
     product.category = category
     product.countInStock = countInStock
+    product.promotionalPrice = promotionalPrice
+    product.dateOfExpiry = dateOfExpiry
 
     const updatedProduct = await product.save()
     res.json(updatedProduct)

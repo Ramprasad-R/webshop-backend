@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import asyncHandler from 'express-async-handler'
 import Brand from '../models/brandModel.js'
 
@@ -20,7 +19,7 @@ const createBrand = asyncHandler(async (req, res) => {
   if (brandName) {
     const addBrand = new Brand({
       user: req.user._id,
-      brandName: brandName.replace(/\w+/g, _.capitalize),
+      brandName: brandName,
     })
     const createdBrand = await addBrand.save()
     res.status(201).json(createdBrand)
@@ -30,4 +29,19 @@ const createBrand = asyncHandler(async (req, res) => {
   }
 })
 
-export { getBrands, createBrand }
+// @desc    Delete a brand
+// @route   DELETE /api/brands/:id
+// @access  Private/Admin
+const deleteBrand = asyncHandler(async (req, res) => {
+  const brand = await Brand.findById(req.params.id)
+
+  if (brand) {
+    await brand.remove()
+    res.json({ message: 'Brand removed' })
+  } else {
+    res.status(404)
+    throw new Error('Brand not found')
+  }
+})
+
+export { getBrands, createBrand, deleteBrand }
