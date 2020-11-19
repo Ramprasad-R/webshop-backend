@@ -1,6 +1,30 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
+import passwordValidator from 'password-validator'
 import generateToken from '../utils/generateToken.js'
+
+const schema = new passwordValidator()
+
+// Add properties to it
+schema
+  .is()
+  .min(8) // Minimum length 8
+  .is()
+  .max(100) // Maximum length 100
+  .has()
+  .uppercase() // Must have uppercase letters
+  .has()
+  .lowercase() // Must have lowercase letters
+  .has()
+  .digits(1) // Must have at least 1 digits
+  .has()
+  .not()
+  .spaces() // Should not have spaces
+  .has()
+  .symbols()
+  .is()
+  .not()
+// .oneOf(['Passw0rd', 'Password123']) // Blacklist these values
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -35,6 +59,15 @@ const registerUser = asyncHandler(async (req, res) => {
   if (userExists) {
     res.status(400)
     throw new Error('User already exists')
+  }
+
+  const passwordRequirementCheck = schema.validate(password)
+
+  if (!passwordRequirementCheck) {
+    res.status(400)
+    throw new Error(
+      'Password must have 8 or more characters with a mix of lower/uppercase letters, numbers & symbols'
+    )
   }
 
   const user = await User.create({
