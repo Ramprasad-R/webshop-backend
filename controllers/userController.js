@@ -3,10 +3,10 @@ import User from '../models/userModel.js'
 import passwordValidator from 'password-validator'
 import generateToken from '../utils/generateToken.js'
 
-const schema = new passwordValidator()
+const passwordValidatorSchema = new passwordValidator()
 
 // Add properties to it
-schema
+passwordValidatorSchema
   .is()
   .min(8) // Minimum length 8
   .is()
@@ -61,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists')
   }
 
-  const passwordRequirementCheck = schema.validate(password)
+  const passwordRequirementCheck = passwordValidatorSchema.validate(password)
 
   if (!passwordRequirementCheck) {
     res.status(400)

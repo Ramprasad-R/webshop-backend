@@ -1,5 +1,7 @@
+import moment from 'moment'
 import asyncHandler from 'express-async-handler'
 import Order from '../models/orderModel.js'
+import alphaNumericIncrementer from '../utils/alphaNumericIncrementer.js'
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -20,6 +22,30 @@ const addOrderItems = asyncHandler(async (req, res, next) => {
     throw new Error('No order items')
     return
   } else {
+    const lastOrder = await Order.findOne()
+      .sort({ field: 'asc', _id: -1 })
+      .limit(1)
+    // console.log(lastOrder)
+
+    const currentDateMonth = moment(new Date(), 'YYYY-MM')
+      .format()
+      .substring(0, 7)
+
+    // console.log(currentDateMonth)
+    let invoiceNumber
+    if (!lastOrder) {
+      invoiceNumber = `${currentDateMonth}-000001`
+    } else {
+      const lastInvoiceNumber = lastOrder.invoiceNumber
+      if (currentDateMonth === lastInvoiceNumber.substring(0, 7)) {
+        const lastSegment = lastInvoiceNumber.split('-').pop()
+        const nextNumber = alphaNumericIncrementer(lastSegment)
+        invoiceNumber = `${currentDateMonth}-${nextNumber}`
+      } else {
+        invoiceNumber = `${currentDateMonth}-000001`
+      }
+    }
+
     const order = new Order({
       orderItems,
       user: req.user._id,
@@ -29,6 +55,7 @@ const addOrderItems = asyncHandler(async (req, res, next) => {
       taxPrice,
       shippingPrice,
       totalPrice,
+      invoiceNumber,
     })
 
     req.createdOrder = await order.save()

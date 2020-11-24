@@ -103,6 +103,11 @@ const orderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
+    invoiceNumber: {
+      type: String,
+      unique: true,
+      required: true,
+    },
   },
   {
     timestamps: true,

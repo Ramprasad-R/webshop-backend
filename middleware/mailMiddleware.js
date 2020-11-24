@@ -69,6 +69,7 @@ const sendOrderEmail = asyncHandler(async (req, res) => {
     taxPrice,
     shippingPrice,
     totalPrice,
+    invoiceNumber,
   } = req.createdOrder
   const mailOrderItem = orderItems.map(
     ({ product, image, countInStock, ...items }) => items
@@ -86,6 +87,7 @@ const sendOrderEmail = asyncHandler(async (req, res) => {
       shippingAddress,
       itemsPrice,
       orderItems,
+      invoiceNumber,
     },
     function (err, data) {
       if (err) {
@@ -97,7 +99,7 @@ const sendOrderEmail = asyncHandler(async (req, res) => {
         var mainOptions = {
           from: process.env.ZOHO_EMAIL,
           to: email,
-          subject: `Your Cauvery Store order # ${_id}`,
+          subject: `Your Cauvery Store invoice # ${invoiceNumber}`,
           html: data,
         }
 

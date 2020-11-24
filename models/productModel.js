@@ -67,6 +67,11 @@ const productSchema = mongoose.Schema(
       required: true,
       default: 0,
     },
+    cost: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
     price: {
       type: Number,
       required: true,
@@ -84,8 +89,13 @@ const productSchema = mongoose.Schema(
     },
     dateOfExpiry: {
       type: Date,
+      default: Date.now,
       required: false,
-      min: Date.now,
+    },
+    barCode: {
+      type: String,
+      required: false,
+      unique: true,
     },
   },
   {

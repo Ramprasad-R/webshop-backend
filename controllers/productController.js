@@ -77,7 +77,9 @@ const deleteProduct = asyncHandler(async (req, res) => {
 const createProduct = asyncHandler(async (req, res) => {
   const product = new Product({
     name: 'Sample name',
+    cost: 0,
     price: 0,
+    promotionalPrice: 0,
     user: req.user._id,
     image: '/images/sample.jpg',
     brand: 'Sample brand',
@@ -86,6 +88,7 @@ const createProduct = asyncHandler(async (req, res) => {
     countInStock: 0,
     numReviews: 0,
     description: 'Sample description',
+    dateOfExpiry: Date.now(),
   })
 
   const createdProduct = await product.save()
@@ -98,6 +101,7 @@ const createProduct = asyncHandler(async (req, res) => {
 const updateProduct = asyncHandler(async (req, res) => {
   const {
     name,
+    barCode,
     price,
     description,
     image,
@@ -113,14 +117,15 @@ const updateProduct = asyncHandler(async (req, res) => {
 
   if (product) {
     product.name = name
+    product.barCode = barCode
     product.price = price
+    product.promotionalPrice = promotionalPrice
     product.description = description
     product.image = image
     product.brand = brand
     product.department = department
     product.category = category
     product.countInStock = countInStock
-    product.promotionalPrice = promotionalPrice
     product.dateOfExpiry = dateOfExpiry
 
     const updatedProduct = await product.save()
